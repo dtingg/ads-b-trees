@@ -26,7 +26,7 @@
     "gh-pages": "^2.2.0",
     "ink-docstrap": "^1.3.2",
     "jest": "^25.1.0",
-    "jest-expect-message": "^1.0.2",
+    "jest-cli": "^26.0.1",
     "jsdoc": "^3.6.4",
     "raw-loader": "^4.0.0",
     "seedrandom": "^3.0.5",
@@ -37,9 +37,6 @@
   },
   "dependencies": {},
   "jest": {
-    "setupFilesAfterEnv": [
-      "jest-expect-message"
-    ],
     "testEnvironment": "node"
   }
 }
