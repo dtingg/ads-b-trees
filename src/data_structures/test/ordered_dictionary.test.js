@@ -1,52 +1,51 @@
-import BinarySearchTree from '../binary_search_tree';
+import BTree from "../b_tree";
 
 const dataStructures = [
-  BinarySearchTree,
-  // We'll add more next week
+  BTree
 ];
 
 dataStructures.forEach(TargetDS => {
   describe(TargetDS, () => {
-    let bst;
+    let dict;
     beforeEach(() => {
-      bst = new TargetDS();
+      dict = new TargetDS();
     });
 
     it('starts empty', () => {
-      expect(bst.count()).toBe(0);
+      expect(dict.count()).toBe(0);
     });
 
     describe('lookup', () => {
       it('returns undefined on an empty tree', () => {
-        expect(bst.lookup('test')).toBe(undefined);
+        expect(dict.lookup('test')).toBe(undefined);
       });
 
       it('returns undefined if the key is not in the tree', () => {
         const keys = ['many', 'keys', 'for', 'this', 'tree'];
         keys.forEach((key, i) => {
-          bst.insert(key);
+          dict.insert(key);
         });
 
-        expect(bst.lookup('dne')).toBe(undefined);
+        expect(dict.lookup('dne')).toBe(undefined);
       });
 
       it('finds the only record', () => {
-        bst.insert('test');
-        expect(bst.lookup('test')).toBeTruthy();
+        dict.insert('test');
+        expect(dict.lookup('test')).toBeTruthy();
       });
 
       it('finds any extant record', () => {
         const keys = ['many', 'keys', 'for', 'this', 'tree'];
         keys.forEach(key => {
-          bst.insert(key);
+          dict.insert(key);
         });
 
         keys.forEach(key => {
-          expect(bst.lookup(key)).toBeTruthy();
+          expect(dict.lookup(key)).toBeTruthy();
         });
 
         keys.reverse().forEach(key => {
-          expect(bst.lookup(key)).toBeTruthy();
+          expect(dict.lookup(key)).toBeTruthy();
         });
       });
 
@@ -60,59 +59,59 @@ dataStructures.forEach(TargetDS => {
         ];
 
         records.forEach(({ key, value }) => {
-          bst.insert(key, value);
+          dict.insert(key, value);
         });
 
         records.forEach(({ key, value }) => {
-          expect(bst.lookup(key)).toBe(value);
+          expect(dict.lookup(key)).toBe(value);
         });
 
         records.reverse().forEach(({ key, value }) => {
-          expect(bst.lookup(key)).toBe(value);
+          expect(dict.lookup(key)).toBe(value);
         });
       });
     });
 
     describe('insert', () => {
       it('increases count by 1', () => {
-        expect(bst.count()).toBe(0);
-        bst.insert('test');
-        expect(bst.count()).toBe(1);
+        expect(dict.count()).toBe(0);
+        dict.insert('test');
+        expect(dict.count()).toBe(1);
 
         const keys = ['many', 'keys', 'for', 'this', 'tree'];
         keys.forEach((key, i) => {
-          bst.insert(key);
-          expect(bst.count()).toBe(2 + i);
+          dict.insert(key);
+          expect(dict.count()).toBe(2 + i);
         });
       });
 
       it('replaces records with the same key and does not increase the count', () => {
-        bst.insert('test', 'first value');
-        expect(bst.count()).toBe(1);
-        expect(bst.lookup('test')).toBe('first value');
+        dict.insert('test', 'first value');
+        expect(dict.count()).toBe(1);
+        expect(dict.lookup('test')).toBe('first value');
 
-        bst.insert('test', 'second value');
-        expect(bst.count()).toBe(1);
-        expect(bst.lookup('test')).toBe('second value');
+        dict.insert('test', 'second value');
+        expect(dict.count()).toBe(1);
+        expect(dict.lookup('test')).toBe('second value');
       });
 
       it('uses true as the default value', () => {
-        bst.insert('test');
-        expect(bst.lookup('test')).toBe(true);
+        dict.insert('test');
+        expect(dict.lookup('test')).toBe(true);
       });
     });
 
-    describe('delete', () => {
+    describe.skip('delete', () => {
       it('returns the value for the removed record', () => {
-        bst.insert('test-key', 'test-value');
+        dict.insert('test-key', 'test-value');
 
-        expect(bst.delete('test-key')).toBe('test-value');
+        expect(dict.delete('test-key')).toBe('test-value');
 
-        expect(bst.lookup('test-key')).toBeUndefined();
+        expect(dict.lookup('test-key')).toBeUndefined();
       });
 
       it('returns undefined if the record was not found', () => {
-        expect(bst.delete('not found')).toBeUndefined();
+        expect(dict.delete('not found')).toBeUndefined();
       });
 
       it('reduces the count by 1', () => {
@@ -125,14 +124,14 @@ dataStructures.forEach(TargetDS => {
         ];
 
         records.forEach(({ key, value }) => {
-          bst.insert(key, value);
+          dict.insert(key, value);
         });
 
-        expect(bst.count()).toBe(5);
+        expect(dict.count()).toBe(5);
 
-        bst.delete('delete-me');
+        dict.delete('delete-me');
 
-        expect(bst.count()).toBe(4);
+        expect(dict.count()).toBe(4);
       });
 
       it('omits the removed record from iteration results', () => {
@@ -145,13 +144,13 @@ dataStructures.forEach(TargetDS => {
         ];
 
         records.forEach(({ key, value }) => {
-          bst.insert(key, value);
+          dict.insert(key, value);
         });
 
-        bst.delete('delete-me');
+        dict.delete('delete-me');
 
         const cb = jest.fn();
-        bst.forEach(cb);
+        dict.forEach(cb);
 
         const calls = cb.mock.calls
         expect(calls.length).toBe(records.length - 1);
@@ -169,11 +168,11 @@ dataStructures.forEach(TargetDS => {
         ];
 
         records.forEach(({ key, value }) => {
-          bst.insert(key, value);
+          dict.insert(key, value);
         });
 
         records.forEach(({ key, value }) => {
-          expect(bst.delete(key)).toBe(value);
+          expect(dict.delete(key)).toBe(value);
         });
       });
 
@@ -183,21 +182,21 @@ dataStructures.forEach(TargetDS => {
           // Construct the tree shown at ./bst-mostly-balanced.png
           records = [33, 4, 42, 1, 19, 34, 53, 12, 27, 38, 50, 57, 9, 13, 45];
           records.forEach(key => {
-            bst.insert(key, `value-${key}`);
+            dict.insert(key, `value-${key}`);
           });
         });
 
         const removeAndVerify = (key, recordList = records) => {
-          const startCount = bst.count();
+          const startCount = dict.count();
 
-          expect(bst.delete(key)).toBe(`value-${key}`);
-          expect(bst.lookup(key)).toBeUndefined();
+          expect(dict.delete(key)).toBe(`value-${key}`);
+          expect(dict.lookup(key)).toBeUndefined();
 
-          expect(bst.count()).toBe(startCount - 1);
+          expect(dict.count()).toBe(startCount - 1);
 
           const remaining = recordList.sort((a,b) => a-b);
           remaining.splice(recordList.indexOf(key), 1);
-          bst.forEach((record, i) => {
+          dict.forEach((record, i) => {
             expect(record.key).toBe(remaining[i]);
             expect(record.value).toBe(`value-${remaining[i]}`);
           });
@@ -207,18 +206,18 @@ dataStructures.forEach(TargetDS => {
 
         it('can remove the record with the smallest key', () => {
           records.sort((a, b) => a - b).forEach(key => {
-            expect(bst.delete(key)).toBe(`value-${key}`);
-            expect(bst.lookup(key)).toBeUndefined();
+            expect(dict.delete(key)).toBe(`value-${key}`);
+            expect(dict.lookup(key)).toBeUndefined();
           });
-          expect(bst.count()).toBe(0);
+          expect(dict.count()).toBe(0);
         });
 
         it('can remove the record with the largest key', () => {
           records.sort((a, b) => b - a).forEach(key => {
-            expect(bst.delete(key)).toBe(`value-${key}`);
-            expect(bst.lookup(key)).toBeUndefined();
+            expect(dict.delete(key)).toBe(`value-${key}`);
+            expect(dict.lookup(key)).toBeUndefined();
           });
-          expect(bst.count()).toBe(0);
+          expect(dict.count()).toBe(0);
         });
 
         it('can remove the root', () => {
@@ -274,42 +273,42 @@ dataStructures.forEach(TargetDS => {
 
       const fill = (records) => {
         records.forEach(({ key, value }) => {
-          bst.insert(key, value);
+          dict.insert(key, value);
         });
       }
 
       it('runs the callback 0 times on an empty tree', () => {
         const cb = jest.fn();
-        bst.forEach(cb);
+        dict.forEach(cb);
 
         expect(cb.mock.calls.length).toBe(0);
       });
 
       it('provides {key, value}, index and tree as cb args', () => {
-        bst.insert('key', 'value');
+        dict.insert('key', 'value');
 
         const cb = jest.fn();
-        bst.forEach(cb);
+        dict.forEach(cb);
 
         const callArgs = cb.mock.calls[0];
         expect(callArgs[0].key).toBe('key');
         expect(callArgs[0].value).toBe('value');
         expect(callArgs[1]).toBe(0);
-        expect(callArgs[2]).toBe(bst);
+        expect(callArgs[2]).toBe(dict);
       });
 
       it('iterates records in key order', () => {
         fill(records);
 
         const cb = jest.fn();
-        bst.forEach(cb);
+        dict.forEach(cb);
 
         sortRecords(records).forEach(({ key, value }, i) => {
           const callArgs = cb.mock.calls[i];
           expect(callArgs[0].key).toBe(key);
           expect(callArgs[0].value).toBe(value);
           expect(callArgs[1]).toBe(i);
-          expect(callArgs[2]).toBe(bst);
+          expect(callArgs[2]).toBe(dict);
         });
       });
 
@@ -317,14 +316,14 @@ dataStructures.forEach(TargetDS => {
         fill(sortRecords(records));
 
         const cb = jest.fn();
-        bst.forEach(cb);
+        dict.forEach(cb);
 
         sortRecords(records).forEach(({ key, value }, i) => {
           const callArgs = cb.mock.calls[i];
           expect(callArgs[0].key).toBe(key);
           expect(callArgs[0].value).toBe(value);
           expect(callArgs[1]).toBe(i);
-          expect(callArgs[2]).toBe(bst);
+          expect(callArgs[2]).toBe(dict);
         });
       });
 
@@ -332,14 +331,14 @@ dataStructures.forEach(TargetDS => {
         fill(sortRecords(records).reverse());
 
         const cb = jest.fn();
-        bst.forEach(cb);
+        dict.forEach(cb);
 
         sortRecords(records).forEach(({ key, value }, i) => {
           const callArgs = cb.mock.calls[i];
           expect(callArgs[0].key).toBe(key);
           expect(callArgs[0].value).toBe(value);
           expect(callArgs[1]).toBe(i);
-          expect(callArgs[2]).toBe(bst);
+          expect(callArgs[2]).toBe(dict);
         });
       });
     });
