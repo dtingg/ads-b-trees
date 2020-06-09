@@ -151,7 +151,23 @@ describe(BTree, () => {
       expect(child.children).toStrictEqual(leftGrandchildren);
 
       const sibling = node.children[childIndex + 1];
+      expect(sibling.isLeaf).toBeFalsy();
       expect(sibling.children).toStrictEqual(rightGrandchildren);
     });
+
+    it('marks sibling as leaf if child was leaf', () => {
+      const node = fillNode({ keyCount: minDegree, isLeaf: false });
+      const child = fillNode({ keyCount: minDegree * 2 - 1, isLeaf: true, keyPrefix: 'child' });
+
+      const childIndex = 2;
+      node.children[childIndex] = child;
+
+      btree._splitChild(node, childIndex);
+
+      const sibling = node.children[childIndex + 1];
+      expect(sibling.isLeaf).toBeTruthy();
+    })
   });
+
+
 });
