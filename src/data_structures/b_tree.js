@@ -63,10 +63,14 @@ class BTree {
     // Assumption: parent is not full, child is full
     if (parent.keys.length >= this.maxDegree - 1) {
       throw new Error("Attempting to split child of a full parent");
+    } else if (parent.isLeaf) {
+      throw new Error("Parent is a leaf");
     }
 
     const child = parent.children[childIndex];
-    if (child.keys.length < this.maxDegree - 1) {
+    if (!child) {
+      throw new Error("Child does not exist");
+    } else if (child.keys.length < this.maxDegree - 1) {
       throw new Error("Attempting to split a child that isn't full");
     }
 
