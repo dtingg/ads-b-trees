@@ -1,47 +1,46 @@
 import BTree from "../b_tree";
 
 describe(BTree, () => {
-  const minDegree = 3;
-  let btree;
-  beforeEach(() => {
-    btree = new BTree(minDegree);
-  });
+  describe('splitChild', () => {
+    const minDegree = 3;
+    let btree;
+    beforeEach(() => {
+      btree = new BTree(minDegree);
+    });
 
-  const fillNode = ({ keyCount, isLeaf, keyPrefix = '', childKeyCount = minDegree }) => {
-    const node = {
-      keys: [],
-      values: [],
-      isLeaf: isLeaf,
-    }
-
-    if (!isLeaf) {
-      node.children = [
-        fillNode({
-          keyCount: childKeyCount,
-          isLeaf: true,
-          keyPrefix: `${keyPrefix}_key_0`
-        })
-      ];
-    }
-
-    for (let i = 1; i <= keyCount; i += 1) {
-      node.keys.push(`${keyPrefix}_key_${i}`);
-      node.values.push(`${keyPrefix}_value_${i}`);
+    const fillNode = ({ keyCount, isLeaf, keyPrefix = '', childKeyCount = minDegree }) => {
+      const node = {
+        keys: [],
+        values: [],
+        isLeaf: isLeaf,
+      }
 
       if (!isLeaf) {
-        node.children.push(
+        node.children = [
           fillNode({
             keyCount: childKeyCount,
             isLeaf: true,
-            keyPrefix: `${keyPrefix}_key_${i}`
+            keyPrefix: `${keyPrefix}_key_0`
           })
-        );
+        ];
       }
-    }
-    return node;
-  }
 
-  describe('splitChild', () => {
+      for (let i = 1; i <= keyCount; i += 1) {
+        node.keys.push(`${keyPrefix}_key_${i}`);
+        node.values.push(`${keyPrefix}_value_${i}`);
+
+        if (!isLeaf) {
+          node.children.push(
+            fillNode({
+              keyCount: childKeyCount,
+              isLeaf: true,
+              keyPrefix: `${keyPrefix}_key_${i}`
+            })
+          );
+        }
+      }
+      return node;
+    }
     describe('error handling', () => {
       it('throws when trying to split a child of a full parent', () => {
         const node = fillNode({ keyCount: minDegree * 2 - 1, isLeaf: false });
@@ -100,8 +99,8 @@ describe(BTree, () => {
       expect(node.keys.length).toBe(beforeKeysCount + 1);
       expect(node.values.length).toBe(beforeValsCount + 1);
 
-      expect(node.keys[childIndex + 1]).toBe(middleKey);
-      expect(node.values[childIndex + 1]).toBe(middleVal);
+      expect(node.keys[childIndex]).toBe(middleKey);
+      expect(node.values[childIndex]).toBe(middleVal);
 
       expect(child.keys).not.toContain(middleKey);
       expect(child.values).not.toContain(middleVal);
@@ -168,6 +167,5 @@ describe(BTree, () => {
       expect(sibling.isLeaf).toBeTruthy();
     })
   });
-
 
 });

@@ -7,12 +7,6 @@ class BTreeNode {
       this.children = [];
     }
   }
-
-  size() {
-    // Number of keys,
-    // or one less than number of children (for an internal node)
-    return this.keys.length;
-  }
 }
 
 class BTree {
@@ -99,8 +93,8 @@ class BTree {
     const sibIndex = childIndex + 1;
 
     // Promote middle key / value from child to parent
-    parent.keys.splice(sibIndex, 0, child.keys[this.minDegree - 1]);
-    parent.values.splice(sibIndex, 0, child.values[this.minDegree - 1]);
+    parent.keys.splice(childIndex, 0, child.keys[this.minDegree - 1]);
+    parent.values.splice(childIndex, 0, child.values[this.minDegree - 1]);
 
     // Insert new sibling into the parent
     parent.children.splice(sibIndex, 0, sibling);

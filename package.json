@@ -30,6 +30,7 @@
     "jsdoc": "^3.6.4",
     "raw-loader": "^4.0.0",
     "seedrandom": "^3.0.5",
+    "shuffle-array": "^1.0.1",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
