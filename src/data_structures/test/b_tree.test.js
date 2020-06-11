@@ -535,12 +535,7 @@ describe(BTree, () => {
     }
 
     const fillAndVerify = (ds, keys) => {
-      keys.forEach(key => {
-        ds.insert(key, `value_${key}`);
-        // const keys = [];
-        // ds.forEach(({key, val}) => keys.push(key));
-        // console.log('keys in order', keys.join(''));
-      });
+      keys.forEach(key => ds.insert(key, `value_${key}`));
 
       expect(ds.count()).toBe(keys.length);
       verifyBtreeStructure(ds);
@@ -559,11 +554,15 @@ describe(BTree, () => {
       });
     }
 
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
     for (let keyLength = 1; keyLength <= maxKeyLength; keyLength += 1) {
-      describe(`key length ${keyLength}`, () => {
+      const recordCount = Math.pow(letters.length, keyLength);
+      const minDegree = 2 * keyLength;
+
+      describe(`key length ${keyLength} (${recordCount} records), minDegree ${minDegree}`, () => {
         let keys;
         beforeEach(() => {
-          const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
           let tuples = [''];
 
           for (let i = 1; i <= keyLength; i += 1) {
@@ -577,7 +576,9 @@ describe(BTree, () => {
           }
 
           keys = tuples;
-          expect(keys.length).toBe(Math.pow(letters.length, keyLength));
+          expect(keys.length).toBe(recordCount);
+
+          btree = new BTree(minDegree);
         });
 
         it('builds, looks up and iterates with sorted input', () => {
