@@ -88,7 +88,7 @@ class BTree {
      * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
      * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
      */
-    
+
     const sibling = new this.Node(child.isLeaf);
     const sibIndex = childIndex + 1;
 
@@ -152,12 +152,11 @@ class BTree {
 
       if (i < node.keys.length && node.keys[i] === key) {
         return { node, index: i }
-      } else if (node.isLeaf) {
-        return {};
-      } else {
-        node = node.children[i]
       }
+
+      node = node.children?.[i];
     }
+    return {};
   }
 
   lookup(key) {
