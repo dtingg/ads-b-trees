@@ -27,7 +27,7 @@ Run tests in watch mode
 $ npm test
 ```
 
-## Assignment - Week 2
+## Assignment - Week 6
 
 ### Core
 
