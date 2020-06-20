@@ -22,6 +22,37 @@ class BTree {
     this._count = 0;
   }
 
+  _insertNonfull(node, key, value) {
+    if (node.keys.length >= this.maxDegree - 1) {
+      throw new Error("Attempting to insert into a full node");
+    }
+
+    while (true) {
+      const index = this._findIndex(node, key);
+
+      if (node.keys[index] === key) {
+        node.values[index] = value;
+        return false;
+      }
+
+      if (node.isLeaf) {
+        node.keys.splice(index, 0, key);
+        node.values.splice(index, 0, value);
+        return true;
+
+      } else {
+        let child = node.children[index];
+        if (child.keys.length === this.maxDegree - 1) {
+          this._splitChild(node, index);
+          if (key > node.keys[index]) {
+            child = node.children[index + 1];
+          }
+        }
+        node = child;
+      }
+    }
+  }
+
   _splitChild(parent, childIndex) {
     // Assumption: parent is not full, child is full
     if (parent.keys.length >= this.maxDegree - 1) {
@@ -58,11 +89,45 @@ class BTree {
      * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
      */
 
-     // TODO
+    const sibling = new this.Node(child.isLeaf);
+    const sibIndex = childIndex + 1;
+
+    // Promote middle key / value from child to parent
+    parent.keys.splice(childIndex, 0, child.keys[this.minDegree - 1]);
+    parent.values.splice(childIndex, 0, child.values[this.minDegree - 1]);
+
+    // Insert new sibling into the parent
+    parent.children.splice(sibIndex, 0, sibling);
+
+    // Move (minDegree - 1) keys and values to the new sibling
+    // TODO: is there a clever way to do this without calling both slice and splice?
+    sibling.keys = child.keys.slice(this.minDegree);
+    child.keys.splice(this.minDegree - 1);
+
+    sibling.values = child.values.slice(this.minDegree);
+    child.values.splice(this.minDegree - 1);
+
+    // Move minDegree grandchildren to the new sibling
+    if (!child.isLeaf) {
+      sibling.children = child.children.splice(this.minDegree);
+    }
   }
 
   insert(key, value = true) {
-    // TODO
+    if (this._root.keys.length === this.maxDegree - 1) {
+      // Root is full!
+      // Create a new root, make the old root its child,
+      // then split the old root
+      const newRoot = new this.Node(false);
+      newRoot.children[0] = this._root;
+
+      this._splitChild(newRoot, 0);
+      this._root = newRoot;
+    }
+
+    if (this._insertNonfull(this._root, key, value)) {
+      this._count += 1;
+    }
   }
 
   _findIndex(node, key) {
@@ -79,8 +144,24 @@ class BTree {
     return i;
   }
 
+  _findNode(key) {
+    let node = this._root;
+
+    while (node) {
+      const i = this._findIndex(node, key);
+
+      if (i < node.keys.length && node.keys[i] === key) {
+        return { node, index: i }
+      }
+
+      node = node.children?.[i];
+    }
+    return {};
+  }
+
   lookup(key) {
-    // TODO
+    const { node, index } = this._findNode(key);
+    return node?.values[index];
   }
 
   count() {
@@ -88,7 +169,20 @@ class BTree {
   }
 
   forEach(callback) {
-    // TODO
+    const visit = (node, callback, i = 0) => {
+      for (let k = 0; k < node.keys.length; k += 1) {
+        if (!node.isLeaf) {
+          i = visit(node.children[k], callback, i);
+        }
+        callback({ key: node.keys[k], value: node.values[k] }, i, this);
+        i += 1;
+      }
+      if (!node.isLeaf) {
+        i = visit(node.children[node.keys.length], callback, i);
+      }
+      return i;
+    }
+    visit(this._root, callback)
   }
 }
 
