@@ -1,10 +1,10 @@
-# Binary Search Trees
+# B-Trees
 
 Ada Developers Academy / Lovelace Learning Labs
 
 Advanced Data Structures 1 - Trees
 
-Week 2
+Week 6
 
 ## Instructions
 
@@ -31,11 +31,17 @@ $ npm test
 
 ### Core
 
-1. Read through the existing code in `src/data_structures/binary_search_tree.js` and ensure you understand how it works
-1. Implement `BinarySearchTree.insert()` so that it passes the tests
-1. Fill out test stubs for `BinarySearchTree.delete()`
-1. Implement `BinarySearchTree.delete()` to pass the tests
+1. Read through the existing code in `src/data_structures/b_tree.js` and ensure you understand how it works
+1. Implement the following functions:
+    - `BTree._findIndex()`
+    - `BTree.lookup()`
+    - `BTree._splitChild()`
+    - `BTree.insert()`
+    - `BTree.forEach()`
 
 ### Optional
 
-1. Implement a visualization of a user list that relies on a binary search tree
+1. Adjust your implementation to take two parameters: the minimum degree of a non-leaf node, and the minimum degree of a leaf node, as discussed in class
+1. Implement a visualization or performance testing for your B-Tree
+1. Reimplement B-Tree in your favorite statically typed programming language so that it automatically chooses the size of a node
+1. Read about B* Trees and B+ Trees, two common variations on B-Trees. Pick one and implement it.
