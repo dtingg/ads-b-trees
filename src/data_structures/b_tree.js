@@ -62,7 +62,37 @@ class BTree {
   }
 
   insert(key, value = true) {
-    // TODO
+    if (this._root.children && (this._root.children.length == this.maxDegree)) {
+      let newRoot = new this.Node(false);
+      newRoot.children = [this._root];      
+      this._splitChild(newRoot, 0);
+      this._root = newRoot;
+    }
+
+    let node = this._root;
+
+    while (true) {
+      let index = this._findIndex(node, key);
+
+      if (node.isLeaf) {
+        node.keys.splice(index, 1);
+        node.values.splice(index, 1);
+        break;
+      } else {
+        let child = node.children[index];
+
+        if (child.children.length == this.maxDegree) {
+          this._splitChild(node, index);
+          if (key > node.keys[index]) {
+            child = node.children[index + 1];
+          }
+        }
+
+        node = child;
+      }
+    }
+
+    this._count += 1;
   }
 
   _findIndex(node, key) {
@@ -80,7 +110,19 @@ class BTree {
   }
 
   lookup(key) {
-    // TODO
+    let node = this._root;
+
+    while (true) {
+      let i = this._findIndex(node, key);
+
+      if (i < node.keys.length && node.keys[i] == key) {
+        return node.values[i];
+      } else if (node.isLeaf) {
+        return undefined
+      } else {
+        node = node.children[i];
+      }
+    }
   }
 
   count() {
