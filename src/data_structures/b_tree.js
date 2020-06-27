@@ -76,7 +76,7 @@ class BTree {
 
       if (node.isLeaf) {
         node.keys.splice(index, 0, key);
-        node.values.splice(index, 0, key);
+        node.values.splice(index, 0, value);
         break;
       } else {
         let child = node.children[index];
